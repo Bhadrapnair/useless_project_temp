@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Animal Language Translator 3000 🐾</title>
+<style>
+  :root{
+    --card-bg: rgba(255,255,255,0.92);
+    --accent: #ff6f00;
+    --muted: #555;
+    --glass: rgba(255,255,255,0.7);
+  }
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif}
+  body{
+    display:flex;align-items:center;justify-content:center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 28px;
+    min-height: 100vh;
+  }
+
+  .card{
+    width: min(980px,96%);
+    max-width:1100px;
+    background: var(--card-bg);
+    border-radius:14px;
+    box-shadow: 0 12px 40px rgba(10,10,10,0.18);
+    padding:20px;
+    display:grid;
+    grid-template-columns: 1fr 360px;
+    gap:18px;
+    align-items:start;
+    position:relative;
+    z-index:2;
+    backdrop-filter: blur(10px);
+  }
+
+  .left{
+    padding:6px 10px;
+  }
+  h1{margin:0;font-size:22px;color:#333}
+  p.lead{margin:8px 0 18px;color:var(--muted)}
+  textarea{
+    width:100%;min-height:140px;border-radius:10px;border:1px solid #eee;padding:12px;
+    font-size:15px;resize:vertical;box-sizing:border-box;
+    transition: border-color 0.3s ease;
+  }
+  textarea:focus{
+    outline:none;
+    border-color:var(--accent);
+  }
+
+  .controls{display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap}
+  select,input[type="range"]{padding:10px;border-radius:8px;border:1px solid #ddd;background:white}
+  button{
+    background:var(--accent);color:white;border:0;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:700;
+    box-shadow:0 6px 14px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+  }
+  button:hover{
+    background:#ff5722;
+    transform: translateY(-2px);
+    box-shadow:0 8px 20px rgba(0,0,0,0.12);
+  }
+  button.secondary{
+    background:#fff;color:#333;border:1px solid #eee;font-weight:600;
+  }
+  button.secondary:hover{
+    background:#f5f5f5;
+    border-color:#ccc;
+  }
+  .muted{color:var(--muted);font-size:13px}
+
+  .output{
+    margin-top:12px;padding:12px;border-radius:10px;background:linear-gradient(180deg,#fffef8,#fff9f0);
+    border:1px dashed #ffe0b2;color:#4d2f00;min-height:80px;white-space:pre-wrap;font-size:16px;
+  }
+
+  .right{
+    padding:8px;border-left:1px dashed rgba(0,0,0,0.04);
+    display:flex;flex-direction:column;gap:12px;align-items:center;
+  }
+  .animalPreview{
+    width:260px;height:240px;border-radius:12px;background:linear-gradient(180deg,#fff,#fff6ea);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(0,0,0,0.06);
+    position:relative;padding:12px;
+  }
+  .animalIcon{font-size:62px;transition: transform 0.3s ease}
+  .animalIcon.playing{
+    transform: translateY(-6px) scale(1.1);
+    animation: bounce 0.6s ease-in-out;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(-6px) scale(1.1); }
+    50% { transform: translateY(-12px) scale(1.15); }
+  }
+  .animalName{font-weight:800;margin-top:6px;color:#333}
+  .hint{font-size:13px;color:var(--muted);text-align:center;margin-top:6px;padding:0 8px}
+
+  footer.small{font-size:12px;color:var(--muted);text-align:center;margin-top:12px}
+
+  .status {
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    margin-top: 8px;
+  }
+  .status.success { background: #e8f5e8; color: #2d5016; }
+  .status.error { background: #ffeaea; color: #721c24; }
+
+  @media (max-width:900px){
+    .card{grid-template-columns: 1fr; padding:14px}
+    .right{order:2; border-left:none; border-top:1px dashed rgba(0,0,0,0.04); padding-top:20px}
+    .left{order:1}
+  }
+</style>
+</head>
+<body>
+  <main class="card" role="main" aria-labelledby="mainTitle">
+    <section class="left" aria-label="Translator">
+      <h1 id="mainTitle">Animal Language Translator 3000 🐾</h1>
+      <p class="lead">Type an English sentence, pick an animal, then translate and hear the animal sounds!</p>
+
+      <label class="muted">Write your message</label>
+      <textarea id="humanText" placeholder="Type something like: 'Hello, how are you? I brought snacks.'"></textarea>
+
+      <div class="controls" style="margin-top:10px">
+        <label class="muted" for="animalSelect">Choose Animal</label>
+        <select id="animalSelect" aria-label="Choose animal">
+          <option value="chicken">🐔 Chicken</option>
+          <option value="dog">🐶 Dog</option>
+          <option value="cat">🐱 Cat</option>
+          <option value="cow">🐄 Cow</option>
+          <option value="parrot">🦜 Parrot</option>
+        </select>
+
+        <button id="translateBtn">Translate</button>
+        <button id="hearBtn" class="secondary">Hear Animal Sound</button>
+        <button id="playAllBtn" class="secondary" title="Play multiple sounds">Play Sequence</button>
+      </div>
+
+      <div class="output" id="translationOutput" aria-live="polite">Your animal translation will appear here.</div>
+
+      <div style="display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap;">
+        <label class="muted">Playback Speed</label>
+        <input id="speed" type="range" min="0.5" max="2" step="0.1" value="1">
+        <span class="muted" id="speedValue">1.0x</span>
+      </div>
+
+      <footer class="small">
+        Make sure your sound files are in the correct folders: sounds/chicken/, sounds/dog/, etc.
+        <div id="statusMsg"></div>
+      </footer>
+    </section>
+
+    <aside class="right" aria-label="Preview">
+      <div class="animalPreview" id="animalPreview">
+        <div class="animalIcon" id="animalIcon">🐔</div>
+        <div class="animalName" id="animalName">Chicken</div>
+        <div class="hint" id="animalHint">Click "Hear Animal Sound" to play the sound for this animal</div>
+      </div>
+
+      <div style="width:100%;display:flex;flex-direction:column;gap:6px;align-items:center">
+        <div class="muted">Audio Status:</div>
+        <div id="loadedInfo" class="muted">Checking audio files...</div>
+      </div>
+
+      <div style="margin-top:6px;text-align:center;">
+        <a href="#" id="example1" class="muted" style="text-decoration:none;color:var(--accent)">Try sample: "I love snacks"</a>
+      </div>
+    </aside>
+  </main>
+
+<script>
+// Animal configuration with proper file paths
+const ANIMALS = {
+  chicken: {
+    display: "Chicken",
+    emoji: "🐔",
+    soundFile: "cluck.mp3.mp3"
+  },
+  dog: {
+    display: "Dog",
+    emoji: "🐶",
+    soundFile: "dog.mp3.mp3"
+  },
+  cat: {
+    display: "Cat",
+    emoji: "🐱",
+    soundFile: "cat.mp3.mp3"
+  },
+  cow: {
+    display: "Cow",
+    emoji: "🐄",
+    soundFile: "cow.mp3.mp3"
+  },
+  parrot: {
+    display: "Parrot",
+    emoji: "🦜",
+    soundFile: "parrot.mp3.mp3"
+  }
+};
+
+// Translation dictionaries
+const DICTIONARY = {
+  chicken: ["cluck", "bok", "buk", "bwak", "bok-bok"],
+  dog: ["woof", "bark", "arf", "ruff", "bow-wow"],
+  cat: ["meow", "purr", "mrow", "nya", "mew"],
+  cow: ["moo", "moooo", "muhh", "mooo"],
+  parrot: ["squawk", "chirp", "hello", "pretty", "cracker"]
+};
+
+// DOM elements
+const txt = document.getElementById("humanText");
+const animalSelect = document.getElementById("animalSelect");
+const translateBtn = document.getElementById("translateBtn");
+const hearBtn = document.getElementById("hearBtn");
+const playAllBtn = document.getElementById("playAllBtn");
+const output = document.getElementById("translationOutput");
+const animalIcon = document.getElementById("animalIcon");
+const animalName = document.getElementById("animalName");
+const loadedInfo = document.getElementById("loadedInfo");
+const example1 = document.getElementById("example1");
+const speedEl = document.getElementById("speed");
+const speedValue = document.getElementById("speedValue");
+const statusMsg = document.getElementById("statusMsg");
+
+// Audio storage
+let audioCache = {};
+let currentAudio = null;
+
+// Update speed display
+speedEl.addEventListener('input', () => {
+  speedValue.textContent = speedEl.value + 'x';
+});
+
+// Update preview when animal changes
+function updatePreview() {
+  const key = animalSelect.value;
+  const animal = ANIMALS[key];
+  animalIcon.textContent = animal.emoji;
+  animalName.textContent = animal.display;
+  
+  // Check if audio is loaded for this animal
+  if (audioCache[key]) {
+    loadedInfo.textContent = "✓ Audio loaded";
+    loadedInfo.style.color = "#28a745";
+  } else {
+    loadedInfo.textContent = "⚠ Audio not loaded";
+    loadedInfo.style.color = "#dc3545";
+  }
+}
+
+// Preload audio files
+async function preloadAudio() {
+  loadedInfo.textContent = "Loading audio files...";
+  
+  for (const [key, config] of Object.entries(ANIMALS)) {
+    try {
+      const audio = new Audio();
+      audio.preload = 'auto';
+      
+      // Create a promise that resolves when audio can play
+      const loadPromise = new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => {
+          reject(new Error('Timeout loading audio'));
+        }, 5000);
+        
+        audio.oncanplaythrough = () => {
+          clearTimeout(timeout);
+          resolve();
+        };
+        
+        audio.onerror = () => {
+          clearTimeout(timeout);
+          reject(new Error('Failed to load audio'));
+        };
+      });
+      
+      audio.src = config.soundFile;
+      await loadPromise;
+      
+      audioCache[key] = audio;
+      console.log(`✓ Loaded audio for ${key}`);
+      
+    } catch (error) {
+      console.warn(`✗ Failed to load audio for ${key}:`, error.message);
+    }
+  }
+  
+  updatePreview();
+  
+  const loadedCount = Object.keys(audioCache).length;
+  const totalCount = Object.keys(ANIMALS).length;
+  
+  if (loadedCount > 0) {
+    statusMsg.innerHTML = `<div class="status success">Audio loaded: ${loadedCount}/${totalCount} animals</div>`;
+  } else {
+    statusMsg.innerHTML = `<div class="status error">No audio files found. Check your sounds folder structure.</div>`;
+  }
+}
+
+// Text translation function
+function textToAnimalText(text, animalKey) {
+  if (!text.trim()) return "";
+  
+  const words = text.trim().split(/\s+/);
+  const animalWords = DICTIONARY[animalKey] || ["..."];
+  
+  return words.map(word => {
+    // Sometimes use multiple animal words for variety
+    const count = Math.random() < 0.3 ? 2 : 1;
+    const tokens = [];
+    
+    for (let i = 0; i < count; i++) {
+      const randomWord = animalWords[Math.floor(Math.random() * animalWords.length)];
+      tokens.push(randomWord);
+    }
+    
+    return tokens.join("-");
+  }).join(" ");
+}
+
+// Play audio for selected animal
+async function playAnimalSound(animalKey) {
+  const audio = audioCache[animalKey];
+  
+  if (!audio) {
+    statusMsg.innerHTML = `<div class="status error">No audio file found for ${animalKey}. Check your sounds folder.</div>`;
+    return false;
+  }
+  
+  try {
+    // Stop any currently playing audio
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+    }
+    
+    // Clone the audio to allow overlapping sounds if needed
+    const audioClone = audio.cloneNode();
+    audioClone.playbackRate = parseFloat(speedEl.value);
+    currentAudio = audioClone;
+    
+    // Visual feedback
+    animalIcon.classList.add('playing');
+    
+    // Play the sound
+    await audioClone.play();
+    
+    // Wait for audio to finish
+    return new Promise(resolve => {
+      audioClone.onended = () => {
+        animalIcon.classList.remove('playing');
+        resolve(true);
+      };
+      
+      audioClone.onerror = () => {
+        animalIcon.classList.remove('playing');
+        resolve(false);
+      };
+    });
+    
+  } catch (error) {
+    console.error('Error playing audio:', error);
+    animalIcon.classList.remove('playing');
+    statusMsg.innerHTML = `<div class="status error">Error playing audio: ${error.message}</div>`;
+    return false;
+  }
+}
+
+// Event listeners
+animalSelect.addEventListener('change', updatePreview);
+
+example1.addEventListener('click', (e) => {
+  e.preventDefault();
+  txt.value = "I love snacks";
+});
+
+translateBtn.addEventListener('click', () => {
+  const text = txt.value;
+  const animal = animalSelect.value;
+  const translation = textToAnimalText(text, animal);
+  output.textContent = translation || "(no text to translate)";
+});
+
+hearBtn.addEventListener('click', async () => {
+  const text = txt.value.trim();
+  const animal = animalSelect.value;
+  
+  if (!text) {
+    alert("Please type something first!");
+    return;
+  }
+  
+  // First translate the text
+  const translation = textToAnimalText(text, animal);
+  output.textContent = translation;
+  
+  // Then play the animal sound
+  const success = await playAnimalSound(animal);
+  
+  if (success) {
+    statusMsg.innerHTML = `<div class="status success">Playing ${ANIMALS[animal].display} sound!</div>`;
+  }
+});
+
+playAllBtn.addEventListener('click', async () => {
+  const text = txt.value.trim();
+  const animal = animalSelect.value;
+  
+  if (!text) {
+    alert("Please type something first!");
+    return;
+  }
+  
+  const translation = textToAnimalText(text, animal);
+  output.textContent = translation;
+  
+  const words = text.split(/\s+/);
+  statusMsg.innerHTML = `<div class="status success">Playing sequence of ${words.length} sounds...</div>`;
+  
+  // Play one sound for each word with a small delay
+  for (let i = 0; i < words.length && i < 5; i++) { // Limit to 5 sounds max
+    await playAnimalSound(animal);
+    if (i < words.length - 1) {
+      await new Promise(resolve => setTimeout(resolve, 200)); // Small pause between sounds
+    }
+  }
+});
+
+// Initialize
+updatePreview();
+preloadAudio();
+
+</script>
+</body>
+</html>
