@@ -3,101 +3,171 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Animal Language Translator 3000 🐾</title>
+<title>Animal Language Translator  🐾</title>
 <style>
-  :root{
-    --card-bg: rgba(255,255,255,0.92);
-    --accent: #ff6f00;
+  :root {
+    --card-bg: #ffffff; /* White background for the card */
+    --accent: #e49452; /* Bright Orange */
     --muted: #555;
-    --glass: rgba(255,255,255,0.7);
+    --glass: rgba(255, 255, 255, 0.7);
+    --primary: #87ceeb; /* Sky Blue */
+    --secondary: #b6c1b6; /* Pale Green */
   }
-  html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif}
-  body{
-    display:flex;align-items:center;justify-content:center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  html, body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Comic Sans MS', cursive, sans-serif; /* Fun font for kids */
+  }
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #c48adb 0%, #7a1db7 100%); /* Bright gradient background */
     padding: 28px;
     min-height: 100vh;
   }
 
-  .card{
-    width: min(980px,96%);
-    max-width:1100px;
+  .card {
+    width: min(980px, 96%);
+    max-width: 1100px;
     background: var(--card-bg);
-    border-radius:14px;
-    box-shadow: 0 12px 40px rgba(10,10,10,0.18);
-    padding:20px;
-    display:grid;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    display: grid;
     grid-template-columns: 1fr 360px;
-    gap:18px;
-    align-items:start;
-    position:relative;
-    z-index:2;
-    backdrop-filter: blur(10px);
+    gap: 20px;
+    align-items: start;
+    position: relative;
+    z-index: 2;
   }
 
-  .left{
-    padding:6px 10px;
+  .left {
+    padding: 10px;
   }
-  h1{margin:0;font-size:22px;color:#333}
-  p.lead{margin:8px 0 18px;color:var(--muted)}
-  textarea{
-    width:100%;min-height:140px;border-radius:10px;border:1px solid #eee;padding:12px;
-    font-size:15px;resize:vertical;box-sizing:border-box;
+  h1 {
+    margin: 0;
+    font-size: 24px;
+    color: var(--accent);
+    text-align: center;
+  }
+  p.lead {
+    margin: 8px 0 18px;
+    color: var(--muted);
+    text-align: center;
+  }
+  textarea {
+    width: 100%;
+    min-height: 140px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    font-size: 16px;
+    resize: vertical;
+    box-sizing: border-box;
     transition: border-color 0.3s ease;
   }
-  textarea:focus{
-    outline:none;
-    border-color:var(--accent);
+  textarea:focus {
+    outline: none;
+    border-color: var(--accent);
   }
 
-  .controls{display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap}
-  select,input[type="range"]{padding:10px;border-radius:8px;border:1px solid #ddd;background:white}
-  button{
-    background:var(--accent);color:white;border:0;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:700;
-    box-shadow:0 6px 14px rgba(0,0,0,0.08);
+  .controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+  select, input[type="range"] {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    background: var(--secondary);
+  }
+  button {
+    background: var(--accent);
+    color: white;
+    border: 0;
+    padding: 10px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 700;
     transition: all 0.3s ease;
   }
-  button:hover{
-    background:#ff5722;
+  button:hover {
+    background: #ea22ea; /* Darker orange on hover */
     transform: translateY(-2px);
-    box-shadow:0 8px 20px rgba(0,0,0,0.12);
   }
-  button.secondary{
-    background:#fff;color:#333;border:1px solid #eee;font-weight:600;
+  button.secondary {
+    background: #fff;
+    color: var(--accent);
+    border: 1px solid #ddd;
+    font-weight: 600;
   }
-  button.secondary:hover{
-    background:#f5f5f5;
-    border-color:#ccc;
+  button.secondary:hover {
+    background: #f5f5f5;
   }
-  .muted{color:var(--muted);font-size:13px}
+  .muted {
+    color: var(--muted);
+    font-size: 14px;
+  }
 
-  .output{
-    margin-top:12px;padding:12px;border-radius:10px;background:linear-gradient(180deg,#fffef8,#fff9f0);
-    border:1px dashed #ffe0b2;color:#4d2f00;min-height:80px;white-space:pre-wrap;font-size:16px;
+  .output {
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 5px;
+    background: var(--secondary);
+    border: 1px solid #ddd;
+    color: #333;
+    min-height: 80px;
+    white-space: pre-wrap;
+    font-size: 16px;
   }
 
-  .right{
-    padding:8px;border-left:1px dashed rgba(0,0,0,0.04);
-    display:flex;flex-direction:column;gap:12px;align-items:center;
+  .right {
+    padding: 10px;
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
   }
-  .animalPreview{
-    width:260px;height:240px;border-radius:12px;background:linear-gradient(180deg,#fff,#fff6ea);
-    display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(0,0,0,0.06);
-    position:relative;padding:12px;
+  .animalPreview {
+    width: 260px;
+    height: 240px;
+    border-radius: 10px;
+    background: var(--secondary);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    padding: 12px;
   }
-  .animalIcon{font-size:62px;transition: transform 0.3s ease}
-  .animalIcon.playing{
-    transform: translateY(-6px) scale(1.1);
-    animation: bounce 0.6s ease-in-out;
+  .animalIcon {
+    font-size: 62px;
   }
-  @keyframes bounce {
-    0%, 100% { transform: translateY(-6px) scale(1.1); }
-    50% { transform: translateY(-12px) scale(1.15); }
+  .animalName {
+    font-weight: 800;
+    margin-top: 6px;
+    color: var(--accent);
   }
-  .animalName{font-weight:800;margin-top:6px;color:#333}
-  .hint{font-size:13px;color:var(--muted);text-align:center;margin-top:6px;padding:0 8px}
+  .hint {
+    font-size: 13px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 6px;
+  }
 
-  footer.small{font-size:12px;color:var(--muted);text-align:center;margin-top:12px}
+  footer.small {
+    font-size: 12px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 12px;
+  }
 
   .status {
     padding: 8px 12px;
@@ -108,17 +178,28 @@
   .status.success { background: #e8f5e8; color: #2d5016; }
   .status.error { background: #ffeaea; color: #721c24; }
 
-  @media (max-width:900px){
-    .card{grid-template-columns: 1fr; padding:14px}
-    .right{order:2; border-left:none; border-top:1px dashed rgba(0,0,0,0.04); padding-top:20px}
-    .left{order:1}
+  @media (max-width: 900px) {
+    .card {
+      grid-template-columns: 1fr;
+      padding: 14px;
+    }
+    .right {
+      order: 2;
+      border-left: none;
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+      padding-top: 20px;
+    }
+    .left {
+      order: 1;
+    }
   }
+
 </style>
 </head>
 <body>
   <main class="card" role="main" aria-labelledby="mainTitle">
     <section class="left" aria-label="Translator">
-      <h1 id="mainTitle">Animal Language Translator 3000 🐾</h1>
+      <h1 id="mainTitle">Animal Language Translator  🐾</h1>
       <p class="lead">Type an English sentence, pick an animal, then translate and hear the animal sounds!</p>
 
       <label class="muted">Write your message</label>
@@ -132,6 +213,8 @@
           <option value="cat">🐱 Cat</option>
           <option value="cow">🐄 Cow</option>
           <option value="parrot">🦜 Parrot</option>
+          <option value="kid">👶 Kid</option>
+          <option value="man">🧑‍🦱Man</option>
         </select>
 
         <button id="translateBtn">Translate</button>
@@ -198,7 +281,18 @@ const ANIMALS = {
     display: "Parrot",
     emoji: "🦜",
     soundFile: "parrot.mp3.mp3"
+  },
+  kid: {
+    display: "kid",
+    emoji: "👶",
+    soundFile: "kid.mp3.mp3"
+  },
+  man: {
+    display: "Man",
+    emoji: "🧑‍🦱",
+    soundFile: "human.mp3.mp3"
   }
+  
 };
 
 // Translation dictionaries
@@ -207,7 +301,9 @@ const DICTIONARY = {
   dog: ["woof", "bark", "arf", "ruff", "bow-wow"],
   cat: ["meow", "purr", "mrow", "nya", "mew"],
   cow: ["moo", "moooo", "muhh", "mooo"],
-  parrot: ["squawk", "chirp", "hello", "pretty", "cracker"]
+  parrot: ["squawk", "chirp", "hello", "pretty", "cracker"],
+  kid:["chindikkunnath allam parayaruth","parayunnath alla chindikkanam"],
+  man:["ante sivanee","enthooo engane","kochi payaya kochi alla","makeup kudi poyo chetta"]
 };
 
 // DOM elements
